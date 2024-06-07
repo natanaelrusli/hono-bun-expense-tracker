@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { api } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from '@tanstack/react-router'
+import { api } from '@/lib/api'
+import { useQuery } from '@tanstack/react-query'
 
 import {
   Table,
@@ -11,60 +11,60 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table'
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton'
 
-export const Route = createFileRoute("/expenses")({
+export const Route = createFileRoute('/expenses')({
   component: Expenses,
-});
+})
 
 async function getAllExpenses() {
-  const result = await api.expenses.$get();
+  const result = await api.expenses.$get()
   if (!result.ok) {
-    throw new Error("server error");
+    throw new Error('server error')
   }
 
-  const data = await result.json();
+  const data = await result.json()
 
-  const keys = data.expenses.length > 0 ? Object.keys(data?.expenses[0]) : [];
+  const keys = data.expenses.length > 0 ? Object.keys(data?.expenses[0]) : []
 
-  return { ...data, keys };
+  return { ...data, keys }
 }
 
 async function getTotalSpent() {
-  const result = await api.expenses["total-spent"].$get();
+  const result = await api.expenses['total-spent'].$get()
   if (!result.ok) {
-    throw new Error("server error");
+    throw new Error('server error')
   }
 
-  const data = await result.json();
+  const data = await result.json()
 
-  return data;
+  return data
 }
 
 function Expenses() {
   const { isPending, data, error } = useQuery({
-    queryKey: ["get-all-expenses"],
+    queryKey: ['get-all-expenses'],
     queryFn: getAllExpenses,
-  });
+  })
 
   const {
     isPending: totalSpentIsPending,
     data: totalSpent,
     error: totalSpentError,
   } = useQuery({
-    queryKey: ["get-total-spent"],
+    queryKey: ['get-total-spent'],
     queryFn: getTotalSpent,
-  });
+  })
 
-  if (error) return "An error has occured" + error.message;
+  if (error) return 'An error has occured' + error.message
 
-  if (totalSpentError) return "An error has occured" + totalSpentError.message;
+  if (totalSpentError) return 'An error has occured' + totalSpentError.message
 
   return (
-    <div className='w-6/12 min-w-[500px] max-md:w-full mx-auto p-2'>
-      <Table>
+    <div className='mx-auto w-full p-2'>
+      <Table className='w-full'>
         <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           {isPending
@@ -72,7 +72,7 @@ function Expenses() {
                 .fill(0)
                 .map((_, i) => (
                   <TableHead className='text-right' key={i}>
-                    <Skeleton className='w-full h-4' />
+                    <Skeleton className='h-4 w-full' />
                   </TableHead>
                 ))
             : data?.keys.map((key, i) => {
@@ -81,9 +81,9 @@ function Expenses() {
                     <TableHead className='text-right' key={key}>
                       {key.toUpperCase()}
                     </TableHead>
-                  );
+                  )
                 } else {
-                  return <TableHead key={key}>{key.toUpperCase()}</TableHead>;
+                  return <TableHead key={key}>{key.toUpperCase()}</TableHead>
                 }
               })}
         </TableHeader>
@@ -104,7 +104,7 @@ function Expenses() {
                     </TableCell>
                   </TableRow>
                 ))
-            : data?.expenses.map((expense) => (
+            : data?.expenses.map(expense => (
                 <TableRow key={expense.id}>
                   <TableCell className='font-medium'>{expense.id}</TableCell>
                   <TableCell>{expense.title}</TableCell>
@@ -131,5 +131,5 @@ function Expenses() {
         </TableFooter>
       </Table>
     </div>
-  );
+  )
 }
